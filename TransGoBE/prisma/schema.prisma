@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int      @id @default(autoincrement())
+  username    String   @unique
+  email       String   @unique
+  password    String
+  gender      String
+  phoneNumber String
+  tickets     Ticket[]
+}
+
+model Bus {
+  id           Int      @id @default(autoincrement())
+  licensePlate String   @unique
+  capacity     Int
+  tickets      Ticket[]
+}
+
+model Ticket {
+  id          Int      @id @default(autoincrement())
+  price       Float
+  seatNumber  Int
+  travelDate  DateTime
+  userId      Int
+  busId       Int
+  user        User     @relation(fields: [userId], references: [id])
+  bus         Bus      @relation(fields: [busId], references: [id])
+  
+  @@unique([busId, seatNumber, travelDate])
+}
